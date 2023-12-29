@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -85,7 +86,20 @@ Route::get('/greeting/{name}', function ($name) {
     return redirect()->route('greetings', ['name' => $name]);
 });
 
+Route::get('/tasks/{id}', function ($id) use ($tasks) {
+    $task = collect($tasks)->firstWhere('id', $id);
+    if (!$task) {
+        abort(Response::HTTP_NOT_FOUND);  //stop the execution of the script and return a Response
+    }
+
+    return view('show', ['task' => $task]);
+
+})->name('tasks.show');
+
 //fallback in case of not existing route
 Route::fallback(function () {
     return "page does not exist";
 });
+
+
+
